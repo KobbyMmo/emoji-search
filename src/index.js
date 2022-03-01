@@ -7,7 +7,7 @@ import ResultsRenderer from "./components/ResultRenderer";
 import SentimentStats from "./components/SentimentStats";
 var appbaseRef = appbasejs({
   url: "https://appbase-demo-ansible-abxiydt-arc.searchbase.io",
-  app: "emoji-dataset",
+  app: "emoji-dataset-obed",
   credentials: "f1da7b624918:3331c67d-3477-4b24-aa89-aefc6ca4683e",
 });
 
@@ -17,6 +17,7 @@ const App = () => {
   const [isSearching, setIsSearching] = useState(false);
   // keeping record of the fetched results
   const [results, setResults] = useState(null);
+  const [openAIResults, setOpenAiResults] = useState(null);
   // keep record of sentiment analysis data
   const [sentimentData, setSentimentData] = useState([]);
   // holds currently generated random text
@@ -41,6 +42,8 @@ const App = () => {
       )
       .then(function (res) {
         setIsSearching(false);
+        console.log(res);
+        setOpenAiResults(res.openAI.choices);
         setResults(res[SEARCH_ID].hits.hits);
         setSentimentData(res.analysis);
       })
@@ -48,6 +51,7 @@ const App = () => {
         console.log("search error: ", err);
         setIsSearching(false);
         setResults([]);
+        setOpenAiResults([]);
         setSentimentData([]);
       });
   };
@@ -108,7 +112,7 @@ const App = () => {
       </div>
       <SentimentStats sentimentData={sentimentData} />
       <div className="result-wrapper">
-        <ResultsRenderer results={results} />
+        <ResultsRenderer openAIResults={openAIResults} results={results} />
       </div>
     </div>
   );
